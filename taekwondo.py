@@ -15,13 +15,14 @@ class TaekwondoScaper():
         res = requests.get("https://ahndk.com/teori/DTaF/teori_DTaF.xml")
         dict_data = xmltodict.parse(res.content, encoding="iso-8859-1")
         theory: list = dict_data['teorirod']['grad']
-        print(theory[0].keys())
+        #print(theory[0].keys())
+        return theory
 
 class Sound:
     def __init__(self, sound_url: str) -> None:
         self.sound = self.get_sound_url(sound_url)
     
-    def get_sound_url(sound_url: str) -> None:
+    def get_sound_url(self, sound_url: str) -> None:
         if sound_url == None:
             return ''
         url = 'https://ahndk.com/teori/DTaF/lyd/'
@@ -37,7 +38,7 @@ class Fact:
 class BeltDegree:
     def __init__(self, **kwargs) -> None:
         self.degree = kwargs['@id']
-        self.stances = [Fact(f) for f in kwargs['stande']['ord']]
+        self.stances = [Fact(**f) for f in kwargs['stande']['ord']]
         # self.kicks
         # self.hand_techniques
         # self.theory
@@ -65,3 +66,20 @@ class FlashCardEncoder():
             object: _description_
         """
         pass
+
+def main():
+    tkd_scraper = TaekwondoScaper()
+    data = tkd_scraper.get_taekwondo_data()
+    print(data[2]['@id'])
+    # BeltDegree(**data[0])
+    # for d in data:
+    #     try:
+    #         belt = BeltDegree(**d)
+    #         print(belt.degree)
+    #     except Exception as e:
+    #         print(e)
+    #print(degress[0].stances[0].sound.sound)
+
+
+if __name__ == '__main__':
+    main()
