@@ -1,5 +1,6 @@
 import requests 
 import xmltodict
+import vlc
 
 class TaekwondoScaper():
 
@@ -28,6 +29,10 @@ class Sound:
         url = 'https://ahndk.com/teori/DTaF/lyd/'
         sound_name = sound_url.split('/')[-1]
         return url + sound_name
+
+    def play_sound(self) -> None:
+        p = vlc.MediaPlayer(self.sound)
+        p.play()
 
 class Fact:
     def __init__(self, **kwargs) -> None:
