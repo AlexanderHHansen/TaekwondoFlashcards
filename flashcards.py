@@ -5,7 +5,7 @@ class TaekwondoFlashcards:
 
     def __init__(self, degrees: list[BeltDegree]) -> None:
         if not degrees:
-            with open('parrot.pkl', 'rb') as f:
+            with open('tkd.pkl', 'rb') as f:
                 self.degrees = pickle.load(f)
         else:
             self.degrees = degrees
