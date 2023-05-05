@@ -1,9 +1,7 @@
 import requests 
 import xmltodict
-import vlc
-from typing import Any
+from typing import Any, Self
 import traceback 
-import charade
 import webbrowser
 
 class TaekwondoScaper():
@@ -20,13 +18,12 @@ class TaekwondoScaper():
         Args:
             dict (dict): dict of taekwondo theory
         """
-        #print(data[0]['håndteknikker'])
-        #print(charade.detect(str(data).encode()))
+        pass
 
     def __get_taekwondo_data(self) -> dict:
         res = requests.get("https://ahndk.com/teori/DTaF/teori_DTaF.xml")
         dict_data = xmltodict.parse(res.content, encoding="iso-8859-1")
-        theory: list = dict_data['teorirod']['grad']
+        theory = dict_data['teorirod']['grad']
         #print(theory[0].keys())
         return theory
 
@@ -34,21 +31,23 @@ class TaekwondoScaper():
         pass
 
 class Sound:    
+
     def __init__(self, sound_url: str) -> None:
         self.sound = self.get_sound_url(sound_url)
     
-    def get_sound_url(self, sound_url: str) -> None:
+    def get_sound_url(self, sound_url: str) -> str:
         if sound_url == None:
             return ''
         url = 'https://ahndk.com/teori/DTaF/lyd/'
         sound_name = sound_url.split('/')[-1]
         return url + sound_name
 
-    def play_sound(self) -> None:
-        p = vlc.MediaPlayer(self.sound)
-        p.play()
+    # def play_sound(self) -> None:
+    #     p = vlc.MediaPlayer(self.sound)
+    #     p.play()
 
-class Fact:
+class Technique:
+
     def __init__(self, **kwargs: dict[str, Any]) -> None:
         self.korean_name = kwargs.get('ko', None)
         self.danish_name = kwargs.get('da', None)
@@ -56,6 +55,7 @@ class Fact:
         self.img = None
 
 class BeltDegree:
+
     def __init__(self, **kwargs: dict[str, Any]) -> None:
         self.degree = kwargs['@id']
         self.stances = self.__init_prop(kwargs['stande'], 'ord')
@@ -64,13 +64,13 @@ class BeltDegree:
         self.theory = self.__init_prop(kwargs['teori'], 'ord')
         self.extra = self.__init_prop(kwargs['diverse'], 'ord')
 
-    def __init_prop(self, dict: dict, key: str) -> list[Fact]:
+    def __init_prop(self, dict: dict, key: str) -> list[Technique]:
         if 'ord' not in dict:
             return []
         elif isinstance(dict[key], list):
-            return [Fact(**f) for f in dict[key]]
+            return [Technique(**f) for f in dict[key]]
         else:
-            return [Fact(**dict[key])]
+            return [Technique(**dict[key])]
 
 
     def search_technique(self, technique_name: str) -> None:
@@ -83,20 +83,7 @@ class BeltDegree:
         url = f'https://www.youtube.com/results?search_query={name}'
         webbrowser.open(url)
 
-class FlashCardEncoder():
-    def __init__(self, belt_degrees: list[BeltDegree]) -> None:
-        self.flashcards = self.theory_to_flashcards(belt_degrees)
 
-    def theory_to_flashcards(belt_degrees: list[BeltDegree]) -> object:
-        """Make flashcards from theory of each belt degree
-
-        Args:
-            belt_degrees (list[BeltDegree]): _description_
-
-        Returns:
-            object: _description_
-        """
-        pass
 
 if __name__ == '__main__':
     pass
